@@ -1,0 +1,35 @@
+{
+  "_doc": "MCApps feature clip – starter config (feature-clip skill). Paths are relative to this file. Keys starting with _ are ignored. Run pnpm voice-meta after every change.",
+  "name": "SLUG",
+  "output": "SLUG.mp4",
+  "_maxSeconds": "60 by default. Raise only when the user asks for a longer clip – and keep it concise.",
+  "maxSeconds": 60,
+  "_variant": "ONE variant per clip. captions (default): numbered step captions. checklist: step list on the left – only for tutorials with several clear sections, each with several notes. Output is SLUG.mp4 either way.",
+  "variant": "captions",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "page": { "w": 1670, "h": 940 },
+  "camBase": { "s": 1.15, "cx": 835, "cy": 470 },
+  "cursorRest": { "x": 1660, "y": 980 },
+  "_theme": "Choose per clip (references/themes.md) and say why here. spotlight suits MCApps' dense tables: one thing at a time, the rest dims.",
+  "theme": { "preset": "spotlight", "cursor": { "style": "arrow", "size": 28 } },
+  "fonts": ["Inter"],
+  "dirs": { "scenes": "scenes", "clips": "clips", "stills": "stills", "audio": "audio" },
+  "voiceOut": "shared/voice.js",
+  "browser": { "channel": "msedge" },
+  "encode": { "crf": 14, "preset": "slow", "capture": "jpeg", "quality": 95 },
+  "assemble": { "crf": 16, "preset": "slow" },
+  "capture": {
+    "baseUrl": "http://localhost:3000",
+    "storageState": "capture/auth.json",
+    "loggedIn": ".mantine-AppShell-main",
+    "steps": "capture/steps.mjs",
+    "scale": 2,
+    "_css": "Hides the yellow task banner, external-issue banners and the red TESTMILJØ dev footer. Dev-only «Patch OK» toasts are hidden in capture/steps.mjs (real toasts may be part of the clip).",
+    "css": ".mantine-AppShell-main > div > :not(.mantine-Flex-root) { display: none !important; }"
+  },
+  "scenes": [
+    { "id": 1, "slug": "SLUG", "silent": true, "duration": 14 }
+  ]
+}

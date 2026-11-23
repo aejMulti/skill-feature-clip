@@ -1,0 +1,35 @@
+{
+  "name": "feature-clip",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs",
+    "render:all": "node render.mjs --all",
+    "stills": "node render.mjs --stills 0,end",
+    "contact": "node render.mjs --contact",
+    "check": "node render.mjs --check-boundaries",
+    "assemble": "node assemble.mjs",
+    "voice-meta": "node tools/voice-meta.mjs",
+    "captions": "node tools/captions.mjs",
+    "ffmpeg": "node tools/ffbin.mjs",
+    "doctor": "node tools/doctor.mjs",
+    "links": "node tools/validate-links.mjs ..",
+    "example": "node examples/run.mjs",
+    "test": "node --test \"tools/*.test.mjs\"",
+    "capture": "node extras/capture.mjs",
+    "budget": "node extras/budget.mjs",
+    "review": "node extras/review.mjs",
+    "variant": "node extras/variant.mjs",
+    "review:sjekkliste": "node extras/variant.mjs && node extras/review.mjs --config video.sjekkliste.json --port 4322",
+    "final": "node extras/final.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "ffmpeg-static": "5.3.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.0"
+  }
+}

@@ -1,0 +1,380 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Clip review</title>
+<style>
+  :root { --bg: #15171c; --panel: #1d2027; --line: #333845; --fg: #e6e8ec; --dim: #8f97a4; --acc: #4c8dff;
+          --open: #ffb02e; --fixed: #3ecf8e; --done: #6b7280; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: var(--bg); color: var(--fg); font: 13px/1.45 system-ui, sans-serif; }
+  button { font: inherit; color: var(--fg); background: #2a2e38; border: 1px solid var(--line); border-radius: 4px; padding: 3px 9px; cursor: pointer; }
+  button:hover { background: #343947; }
+  textarea { width: 100%; font: inherit; color: var(--fg); background: #12141a; border: 1px solid var(--line); border-radius: 4px; padding: 6px; resize: vertical; }
+  #app { display: grid; grid-template-columns: 1fr 360px; height: 100%; }
+  #main { display: flex; flex-direction: column; min-width: 0; padding: 12px; gap: 10px; }
+  #viewport { position: relative; flex: 1; min-height: 0; display: flex; align-items: center; justify-content: center; }
+  #frame { position: relative; background: #000; outline: 1px solid var(--line); overflow: hidden; }
+  #frame iframe { position: absolute; left: 0; top: 0; border: 0; transform-origin: 0 0; visibility: hidden; pointer-events: none; }
+  #frame iframe.on { visibility: visible; }
+  #overlay { position: absolute; inset: 0; cursor: crosshair; }
+  .mark { position: absolute; pointer-events: none; border: 2px solid var(--open); }
+  .mark.pt { width: 20px; height: 20px; margin: -10px 0 0 -10px; border-radius: 50%; }
+  .mark.fixed { border-color: var(--fixed); } .mark.draft { border-color: var(--acc); border-style: dashed; }
+  .mark span { position: absolute; left: 100%; top: -14px; margin-left: 2px; font: 600 11px/1 system-ui; color: #000; background: var(--open); padding: 2px 4px; border-radius: 3px; }
+  .mark.fixed span { background: var(--fixed); } .mark.draft span { background: var(--acc); }
+  #bar { display: flex; align-items: center; gap: 10px; }
+  #time { font: 12px/1 ui-monospace, monospace; color: var(--dim); white-space: nowrap; }
+  #timeline { position: relative; height: 34px; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; cursor: pointer; user-select: none; }
+  .seg { position: absolute; top: 0; bottom: 0; border-right: 1px solid var(--line); color: var(--dim); font-size: 11px; padding: 2px 5px; overflow: hidden; white-space: nowrap; }
+  .tick { position: absolute; bottom: 2px; width: 8px; height: 8px; margin-left: -4px; border-radius: 50%; background: var(--open); }
+  .tick.fixed { background: var(--fixed); }
+  #head { position: absolute; top: -3px; bottom: -3px; width: 2px; margin-left: -1px; background: var(--acc); pointer-events: none; }
+  #status { color: var(--dim); font-size: 12px; min-height: 1.4em; }
+  #status.err { color: #ff6b6b; }
+  #side { border-left: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; min-height: 0; }
+  #side header { padding: 10px 12px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 8px; }
+  #side header h1 { font-size: 14px; margin: 0; flex: 1; }
+  #draft { padding: 10px 12px; border-bottom: 1px solid var(--line); display: none; }
+  #draft.on { display: block; }
+  #draft .ctx, .note .ctx { color: var(--dim); font-size: 12px; margin-bottom: 6px; word-break: break-word; }
+  #draft .row { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+  #list { overflow: auto; flex: 1; padding: 6px 0; }
+  .note { padding: 8px 12px; border-left: 3px solid var(--open); margin: 0 0 6px; cursor: pointer; }
+  .note:hover { background: #242833; }
+  .note.fixed { border-left-color: var(--fixed); } .note.done { border-left-color: var(--done); opacity: .55; }
+  .note .hd { display: flex; gap: 6px; font-size: 12px; color: var(--dim); }
+  .note .hd b { color: var(--fg); }
+  .note .tx { margin: 3px 0; white-space: pre-wrap; }
+  .note .rp { font-size: 12px; margin: 3px 0 0 8px; padding-left: 8px; border-left: 2px solid var(--line); white-space: pre-wrap; }
+  .note .rp i { color: var(--dim); font-style: normal; }
+  .note .act { display: flex; gap: 6px; margin-top: 6px; }
+  .note .act button { font-size: 12px; padding: 1px 7px; }
+  .hint { color: var(--dim); font-size: 12px; padding: 8px 12px; border-top: 1px solid var(--line); }
+  kbd { font: 11px ui-monospace, monospace; background: #2a2e38; border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="main">
+    <div id="viewport"><div id="frame"><div id="overlay"></div></div></div>
+    <div id="bar"><button id="play">Play</button><div id="time"></div><div id="status"></div></div>
+    <div id="timeline"><div id="head"></div></div>
+  </div>
+  <aside id="side">
+    <header><h1 id="title">Review</h1><button id="copy" title="Copy a message to paste to Claude">Copy for Claude</button></header>
+    <div id="draft">
+      <div class="ctx" id="draftCtx"></div>
+      <textarea id="draftText" rows="3" placeholder="What should change? (Enter saves, Shift+Enter new line, Esc cancels)"></textarea>
+      <div class="row"><button id="draftCancel">Cancel</button><button id="draftSave">Save note</button></div>
+    </div>
+    <div id="list"></div>
+    <div class="hint">Click or drag on the frame to add a note. <kbd>Space</kbd> play · <kbd>←</kbd><kbd>→</kbd> 1 s · <kbd>Shift</kbd>+arrows 1 frame · <kbd>Home</kbd> start</div>
+  </aside>
+</div>
+<script>
+const $ = (s) => document.querySelector(s);
+const frameEl = $("#frame"), overlay = $("#overlay"), timeline = $("#timeline");
+let INFO = { fps: 30, width: 1920, height: 1080, scenes: [] };
+let scenes = [];          // { ...info scene, start, duration, iframe, win }
+let T = Number(new URLSearchParams(location.hash.slice(1)).get("t")) || 0;
+let playing = false, k = 1, notes = [], draft = null;
+
+const total = () => scenes.reduce((s, x) => s + x.duration, 0);
+const fmt = (t) => t.toFixed(2).padStart(5, " ");
+const snap = (t) => Math.round(t * INFO.fps) / INFO.fps;
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+function status(msg, err = false) { const el = $("#status"); el.textContent = msg; el.className = err ? "err" : ""; }
+
+// ---------- Loading scenes ----------
+function loadScene(s) {
+  return new Promise((resolve) => {
+    const f = document.createElement("iframe");
+    f.width = INFO.width; f.height = INFO.height;
+    f.style.transform = `scale(${k})`;
+    f.addEventListener("load", async () => {
+      const win = f.contentWindow;
+      for (let i = 0; i < 100 && !win.DEMO; i++) await new Promise((r) => setTimeout(r, 50));
+      if (!win.DEMO) { s.error = `${s.url}: window.DEMO missing – open the scene directly and check the console`; return resolve(); }
+      await win.document.fonts.ready;
+      s.win = win; s.duration = win.DEMO.duration; s.error = null;
+      resolve();
+    }, { once: true });
+    f.src = `${s.url}?render=1&_=${Date.now()}`;
+    s.iframe = f;
+    frameEl.insertBefore(f, overlay);
+  });
+}
+
+let generation = 0;
+async function loadAll(changed) {
+  const gen = ++generation;
+  {
+    const info = await (await fetch("/__review/info")).json();
+    const next = info.scenes.map((s) => ({ ...s, duration: s.duration ?? 3 }));
+    INFO = info;
+    await Promise.all(next.map(loadScene));
+    if (gen !== generation) { for (const s of next) s.iframe?.remove(); return; }   // a newer reload won
+    for (const s of scenes) s.iframe?.remove();   // swap only when the new set is ready: no blank flash
+    scenes = next;
+    let start = 0; for (const s of scenes) { s.start = start; start += s.duration; }
+    $("#title").textContent = info.name || "Review";
+    document.title = `Review · ${info.name || ""}`;
+    layout(); drawTimeline(); seek(Math.min(T, total()));
+    const errs = scenes.filter((s) => s.error);
+    if (errs.length) status(errs.map((s) => s.error).join(" · "), true);
+    else status(changed ? `Reloaded (${changed.slice(0, 3).join(", ")}${changed.length > 3 ? ", …" : ""})` : `${scenes.length} scene(s), ${total().toFixed(1)} s`);
+  }
+}
+
+// ---------- Layout ----------
+function layout() {
+  const vp = $("#viewport").getBoundingClientRect();
+  k = Math.min(vp.width / INFO.width, vp.height / INFO.height);
+  frameEl.style.width = INFO.width * k + "px"; frameEl.style.height = INFO.height * k + "px";
+  for (const s of scenes) if (s.iframe) s.iframe.style.transform = `scale(${k})`;
+  drawMarks();
+}
+addEventListener("resize", layout);
+
+// ---------- Seeking and playback ----------
+function sceneAt(t) { return scenes.find((s) => t < s.start + s.duration) ?? scenes[scenes.length - 1]; }
+function seek(t) {
+  if (!scenes.length) return;
+  T = Math.max(0, Math.min(t, total()));
+  const s = sceneAt(T);
+  const local = Math.min(T - s.start, s.duration);
+  for (const x of scenes) x.iframe?.classList.toggle("on", x === s);
+  try { s.win?.DEMO.seek(playing ? local : snap(local)); } catch (e) { status(`${s.url}: ${e.message}`, true); }
+  $("#time").textContent = `${fmt(T)} / ${total().toFixed(2)} s · scene ${s.key} @ ${fmt(local)} s · frame ${Math.round(local * INFO.fps)}`;
+  $("#head").style.left = (T / (total() || 1)) * 100 + "%";
+  if (!playing) history.replaceState(null, "", `#t=${T.toFixed(3)}`);
+  drawMarks();
+}
+let last = 0;
+function loop(now) {
+  if (!playing) return;
+  T += (now - last) / 1000; last = now;
+  if (T >= total()) T = 0;
+  seek(T);
+  requestAnimationFrame(loop);
+}
+function setPlaying(p) {
+  playing = p; $("#play").textContent = p ? "Pause" : "Play";
+  if (p) { cancelDraft(); last = performance.now(); requestAnimationFrame(loop); } else seek(snap(T));
+}
+$("#play").onclick = () => setPlaying(!playing);
+
+addEventListener("keydown", (e) => {
+  if (e.target.closest("textarea")) return;
+  const step = e.shiftKey ? 1 / INFO.fps : 1;
+  if (e.code === "Space") { e.preventDefault(); setPlaying(!playing); }
+  else if (e.key === "ArrowRight") { setPlaying(false); seek(T + step); }
+  else if (e.key === "ArrowLeft") { setPlaying(false); seek(T - step); }
+  else if (e.key === "Home") { setPlaying(false); seek(0); }
+});
+
+// ---------- Timeline ----------
+function drawTimeline() {
+  timeline.querySelectorAll(".seg,.tick").forEach((e) => e.remove());
+  const tot = total() || 1;
+  for (const s of scenes) {
+    timeline.insertAdjacentHTML("beforeend", `<div class="seg" style="left:${s.start / tot * 100}%;width:${s.duration / tot * 100}%">${esc(s.key)} ${esc(s.slug)}</div>`);
+  }
+  for (const n of notes) {
+    if (n.status === "done") continue;
+    const g = globalTime(n);
+    if (g != null) timeline.insertAdjacentHTML("beforeend", `<div class="tick ${n.status}" style="left:${g / tot * 100}%"></div>`);
+  }
+}
+function globalTime(n) { const s = scenes.find((x) => x.key === n.scene?.key); return s ? s.start + n.t : null; }
+function scrub(e) {
+  const r = timeline.getBoundingClientRect();
+  seek(((e.clientX - r.left) / r.width) * total());
+}
+timeline.addEventListener("pointerdown", (e) => {
+  setPlaying(false); scrub(e); timeline.setPointerCapture(e.pointerId);
+  timeline.onpointermove = scrub;
+  timeline.onpointerup = () => { timeline.onpointermove = null; seek(snap(T)); };
+});
+
+// ---------- Marks on the frame ----------
+function markHtml(n, cls) {
+  const label = n.id ? `#${n.id}` : "new";
+  if (n.box) return `<div class="mark ${cls}" style="left:${n.box.x * k}px;top:${n.box.y * k}px;width:${n.box.w * k}px;height:${n.box.h * k}px"><span>${label}</span></div>`;
+  return `<div class="mark pt ${cls}" style="left:${n.point.x * k}px;top:${n.point.y * k}px"><span>${label}</span></div>`;
+}
+function drawMarks() {
+  overlay.innerHTML = "";
+  const near = 0.5;   // show notes within ±0.5 s of the playhead
+  for (const n of notes) {
+    if (n.status === "done") continue;
+    const g = globalTime(n);
+    if (g != null && Math.abs(g - T) <= near) overlay.insertAdjacentHTML("beforeend", markHtml(n, n.status));
+  }
+  if (draft) overlay.insertAdjacentHTML("beforeend", markHtml(draft, "draft"));
+}
+
+// ---------- New notes ----------
+function describe(doc, x, y) {
+  let el = doc.elementFromPoint(x, y);
+  const picked = el;
+  for (let e = el, i = 0; e && e !== doc.body && i < 8; e = e.parentElement, i++) {
+    if (e.id || e.dataset?.hot || e.dataset?.shot || /\b(step|title-card|callout|checklist|cl-row|caption)\b/.test(e.className)) { el = e; break; }
+  }
+  if (!el || el === doc.documentElement) return null;
+  const sel = (e) => e.tagName.toLowerCase() + (e.id ? "#" + e.id : "") +
+    (e.dataset?.shot ? `[data-shot="${e.dataset.shot}"]` : "") + (e.dataset?.hot ? `[data-hot="${e.dataset.hot}"]` : "") +
+    [...e.classList].slice(0, 3).map((c) => "." + c).join("");
+  const shot = picked?.closest?.("[data-shot]");
+  const selector = (shot && shot !== el ? sel(shot) + " " : "") + sel(el);
+  const text = (el.innerText || "").trim().replace(/\s+/g, " ").slice(0, 120);
+  return { selector, text };
+}
+function visibleTexts(doc) {
+  const win = doc.defaultView;
+  const vis = (el) => {
+    if (!el.getClientRects().length) return false;
+    for (let e = el; e && e !== doc.body; e = e.parentElement) {
+      const cs = win.getComputedStyle(e);
+      if (cs.display === "none" || cs.visibility === "hidden" || Number(cs.opacity) < 0.05) return false;
+    }
+    return true;
+  };
+  return [...doc.querySelectorAll(".step, .title-card, .callout")].filter(vis)
+    .map((e) => (e.innerText || "").trim().replace(/\s+/g, " ")).filter(Boolean);
+}
+
+let down = null;
+overlay.addEventListener("pointerdown", (e) => {
+  if (!scenes.length) return;
+  setPlaying(false);
+  const r = overlay.getBoundingClientRect();
+  down = { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k };
+  overlay.setPointerCapture(e.pointerId);
+});
+overlay.addEventListener("pointermove", (e) => {
+  if (!down) return;
+  const r = overlay.getBoundingClientRect();
+  const x = (e.clientX - r.left) / k, y = (e.clientY - r.top) / k;
+  startDraft(down, { x, y }, true);
+});
+overlay.addEventListener("pointerup", (e) => {
+  if (!down) return;
+  const r = overlay.getBoundingClientRect();
+  const end = { x: (e.clientX - r.left) / k, y: (e.clientY - r.top) / k };
+  startDraft(down, end, false);
+  down = null;
+});
+
+function startDraft(a, b, moving) {
+  const s = sceneAt(T);
+  const local = snap(Math.min(T - s.start, s.duration));
+  const isBox = Math.abs(b.x - a.x) > 8 || Math.abs(b.y - a.y) > 8;
+  const round = (v) => Math.round(v);
+  const shape = isBox
+    ? { box: { x: round(Math.min(a.x, b.x)), y: round(Math.min(a.y, b.y)), w: round(Math.abs(b.x - a.x)), h: round(Math.abs(b.y - a.y)) } }
+    : { point: { x: round(a.x), y: round(a.y) } };
+  draft = { ...shape };
+  if (moving) return drawMarks();
+  const doc = s.win?.document;
+  const cx = isBox ? shape.box.x + shape.box.w / 2 : shape.point.x, cy = isBox ? shape.box.y + shape.box.h / 2 : shape.point.y;
+  draft = {
+    ...shape,
+    scene: { id: s.id, key: s.key, file: s.url.slice(1) },
+    t: Number(local.toFixed(3)), frame: Math.round(local * INFO.fps), globalT: Number((s.start + local).toFixed(3)),
+    element: doc ? describe(doc, cx, cy) : null,
+    captions: doc ? visibleTexts(doc) : [],
+  };
+  $("#draftCtx").innerHTML = `Scene ${esc(s.key)} @ ${local.toFixed(2)} s · ${isBox ? "box" : "point"}` +
+    (draft.element ? `<br>${esc(draft.element.selector)}${draft.element.text ? ` – “${esc(draft.element.text.slice(0, 60))}”` : ""}` : "");
+  $("#draft").classList.add("on");
+  $("#draftText").value = "";
+  $("#draftText").focus();
+  drawMarks();
+}
+function cancelDraft() { draft = null; $("#draft").classList.remove("on"); drawMarks(); }
+async function saveDraft() {
+  const text = $("#draftText").value.trim();
+  if (!draft || !text) return;
+  const note = { ...draft, text };
+  cancelDraft();
+  await op({ op: "add", note });
+}
+$("#draftSave").onclick = saveDraft;
+$("#draftCancel").onclick = cancelDraft;
+$("#draftText").addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveDraft(); }
+  if (e.key === "Escape") cancelDraft();
+});
+
+// ---------- Notes list ----------
+async function op(body) {
+  const res = await fetch("/__review/notes", { method: "POST", body: JSON.stringify(body) });
+  const data = await res.json();
+  if (!res.ok) return status(data.error, true);
+  notes = data; renderNotes();
+}
+async function loadNotes() {
+  const res = await fetch("/__review/notes"); const data = await res.json();
+  if (!res.ok) return status(data.error, true);
+  notes = data; renderNotes();
+}
+function renderNotes() {
+  const order = { open: 0, fixed: 1, done: 2 };
+  const sorted = [...notes].sort((a, b) => (order[a.status] ?? 0) - (order[b.status] ?? 0) || (a.globalT ?? 0) - (b.globalT ?? 0));
+  $("#list").innerHTML = sorted.map((n) => `
+    <div class="note ${n.status}" data-id="${n.id}">
+      <div class="hd"><b>#${n.id}</b><span>${esc(n.status)}</span><span>scene ${esc(n.scene?.key)} @ ${Number(n.t).toFixed(2)} s</span></div>
+      <div class="tx">${esc(n.text)}</div>
+      ${n.element ? `<div class="ctx">${esc(n.element.selector)}</div>` : ""}
+      ${(n.replies ?? []).map((r) => `<div class="rp"><i>${esc(r.by)}:</i> ${esc(r.text)}</div>`).join("")}
+      <div class="act">
+        ${n.status !== "done" ? `<button data-a="done">Done</button>` : ""}
+        ${n.status !== "open" ? `<button data-a="reopen">Reopen</button>` : ""}
+        <button data-a="delete">Delete</button>
+      </div>
+      <div class="reopen" hidden><textarea rows="2" placeholder="What is still wrong? (optional, Enter saves)"></textarea></div>
+    </div>`).join("") || `<div class="hint" style="border:0">No notes yet.</div>`;
+  const open = notes.filter((n) => n.status === "open").length, fixed = notes.filter((n) => n.status === "fixed").length;
+  $("#copy").textContent = `Copy for Claude (${open})`;
+  $("#copy").title = `${open} open, ${fixed} fixed to check`;
+  drawTimeline(); drawMarks();
+}
+$("#list").addEventListener("click", async (e) => {
+  const item = e.target.closest(".note"); if (!item) return;
+  const id = Number(item.dataset.id), n = notes.find((x) => x.id === id);
+  const a = e.target.closest("button")?.dataset.a;
+  if (a === "done") return op({ op: "update", id, patch: { status: "done" } });
+  if (a === "delete") return op({ op: "delete", id });
+  if (a === "reopen") {
+    const box = item.querySelector(".reopen"); box.hidden = false;
+    const ta = box.querySelector("textarea"); ta.focus();
+    ta.onkeydown = (ev) => {
+      if (ev.key === "Enter" && !ev.shiftKey) { ev.preventDefault(); op({ op: "update", id, patch: { status: "open", reply: ta.value.trim() || undefined } }); }
+      if (ev.key === "Escape") box.hidden = true;
+    };
+    return;
+  }
+  if (e.target.closest("textarea")) return;
+  const g = globalTime(n);
+  if (g != null) { setPlaying(false); seek(g); }
+});
+$("#copy").onclick = async () => {
+  const open = notes.filter((n) => n.status === "open").length;
+  const msg = `Review notes are ready: ${open} open note(s) in review/notes.json. Fix them, mark each "fixed" with a reply, then tell me to check.`;
+  await navigator.clipboard.writeText(msg);
+  status("Copied – paste it to Claude.");
+};
+
+// ---------- Live reload ----------
+const ev = new EventSource("/__review/events");
+ev.addEventListener("change", (e) => { const files = JSON.parse(e.data); loadAll(files); loadNotes(); });
+ev.addEventListener("notes", loadNotes);
+ev.onerror = () => status("Lost connection to the review server – is `pnpm review` still running?", true);
+ev.onopen = () => { if ($("#status").classList.contains("err")) status("Connected"); };
+
+loadAll().then(loadNotes);
+</script>
+</body>
+</html>

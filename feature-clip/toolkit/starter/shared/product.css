@@ -1,0 +1,56 @@
+/* MCApps look for the overlays (feature-clip standard). App tokens: Inter, text rgb(48,56,65), primary #4782b8,
+ * dark surfaces #1f2329-ish. Add clip-specific typing overlays at the bottom; keep the shared part unchanged so all
+ * department clips look the same. */
+:root {
+  --stage-bg: #f1f3f5;
+  --page-bg: #fff;
+  --highlight: #4782b8;
+  --highlight-glow: rgba(71, 130, 184, .22);
+  --ripple: rgba(71, 130, 184, .45);
+  --caret: rgb(48, 56, 65);
+
+  /* Step captions: 48 px, may wrap to two balanced lines (max 1180 px). Two lines cover the bottom ~230 px. */
+  --caption-font: "Inter", sans-serif;
+  --caption-size: 48px;
+  --caption-weight: 600;
+  --caption-color: #fff;
+  --caption-bg: rgba(31, 35, 41, .9);
+  --caption-radius: 10px;
+  --caption-pad: 18px 34px 18px 22px;
+  --caption-max: 80%;
+  --step-max: 1180px;
+  --step-badge-bg: #4782b8;
+  --step-badge-color: #fff;
+
+  /* Checklist variant: panel on the left, 32 px margin + 330 px wide (clipLayout panel = 362). */
+  --checklist-width: 330px;
+  --checklist-size: 30px;
+  --checklist-bg: rgba(31, 35, 41, .92);
+  --checklist-accent: #4782b8;
+  --checklist-done: #2f9e44;
+}
+#steps .step .tx { text-wrap: balance; }
+
+/* Title and end cards (on the stage, not zoomed). */
+.card { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: rgba(31, 35, 41, .86); color: #fff; font-family: "Inter", sans-serif; }
+.card .kicker { font-size: 26px; font-weight: 500; letter-spacing: .12em; text-transform: uppercase; color: #9cc0e2; }
+.card h1 { margin: 0; font-size: 84px; font-weight: 700; letter-spacing: -.02em; }
+.card p { margin: 0; font-size: 34px; font-weight: 400; color: #d5dbe1; }
+.card .bar { width: 96px; height: 6px; border-radius: 3px; background: #4782b8; }
+
+/* Typing overlays over empty fields in the screenshots (typeText targets). */
+/* Mantine TextInput sm: 36 px, 14 px Inter 300. */
+.fake-input { box-sizing: border-box; background: #fff; border: 1px solid #ced4da; border-radius: 4px;
+              padding: 0 12px; font: 300 14px/34px "Inter", sans-serif; color: rgb(48, 56, 65); white-space: pre; }
+.fake-input.focus { border-color: #4782b8; }
+/* Mantine md input: 42 px, 16 px Inter 300. */
+.fake-md { box-sizing: border-box; background: #fff; border: 1px solid #ced4da; border-radius: 4px; padding: 0 14px;
+           font: 300 16px/40px "Inter", sans-serif; color: rgb(48, 56, 65); white-space: pre; }
+.fake-md.focus { border-color: #4782b8; }
+/* ag-grid filter inputs (14 px); .icon = text starts after a leading search icon. */
+.fake-ag { box-sizing: border-box; background: #fff; font: 400 14px/30px "Inter", sans-serif; color: rgb(24, 29, 31); white-space: pre; }
+.fake-ag.icon { padding-left: 28px; border-radius: 4px; }
+.fake-input .placeholder, .fake-md .placeholder { color: #adb5bd; }
+
+/* ---- Clip-specific overlays below ---- */

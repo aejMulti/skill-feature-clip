@@ -1,0 +1,13 @@
+{
+  "_doc": "Example project: run `pnpm example` from the toolkit folder. Paths are relative to this file. Silent clip, no voice.",
+  "name": "example",
+  "output": "example.mp4",
+  "theme": "spotlight",
+  "dirs": { "scenes": ".", "clips": "clips", "stills": "stills", "audio": "audio" },
+  "voiceOut": "shared/voice.js",
+  "encode": { "preset": "veryfast" },
+  "assemble": { "preset": "veryfast" },
+  "scenes": [
+    { "id": 1, "slug": "example", "silent": true, "duration": 9 }
+  ]
+}

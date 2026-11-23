@@ -1,0 +1,7 @@
+node_modules/
+*.local.md
+*.zip
+feature-clip/toolkit/examples/example.mp4
+feature-clip/toolkit/examples/clips/
+feature-clip/toolkit/examples/stills/
+feature-clip/toolkit/examples/shared/
