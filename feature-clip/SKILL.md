@@ -1,6 +1,6 @@
 ---
 name: feature-clip
-description: Make short silent feature-overview videos (MP4, 1920×1080, ~30–60 s) of a web app (MCApps by default) – real UI screenshots with camera zoom, cursor, click ripples, highlights and Norwegian text, no voice or audio. Each clip is made in one variant – numbered step captions (default), or a persistent step checklist at the side for multi-section tutorials. Checks every caption against the code, writes a storyboard, captures the real app with Playwright, iterates in a live review page where the user leaves notes on frames, then renders. Use when the user wants a feature clip, how-to clip, tutorial video, release-note video, GIF-like walkthrough or short screencast of one feature, even if they only ask for the storyboard first.
+description: Make short silent feature-overview videos (MP4, 1920×1080, ~30–60 s) of a web app – real UI screenshots with camera zoom, cursor, click ripples, highlights and Norwegian text, no voice or audio. Each clip is made in one variant – numbered step captions (default), or a persistent step checklist at the side for multi-section tutorials. Checks every caption against the code, writes a storyboard, captures the real app with Playwright, iterates in a live review page where the user leaves notes on frames, then renders. Use when the user wants a feature clip, how-to clip, tutorial video, release-note video, GIF-like walkthrough or short screencast of one feature, even if they only ask for the storyboard first.
 ---
 
 # Feature clip
@@ -14,8 +14,8 @@ Turns "show how feature X works" into a short, silent MP4 with Norwegian on-scre
 Pick the variant at intake and render only that one – never both by assumption. Either way the file is
 `<slug>.mp4`: never label the video «sjekkliste»/«checklist» in its file name or title.
 
-This file is the router. Load only what the task needs. MCApps specifics (login, demo data, CSS, gotchas):
-`references/mcapps.md`.
+This file is the router. Load only what the task needs. Target-app specifics (login, demo data, CSS, gotchas):
+`references/target-app.md`.
 
 ## Hard rules
 
@@ -36,7 +36,7 @@ This file is the router. Load only what the task needs. MCApps specifics (login,
   both variants – never offset beside the checklist panel; only the camera shifts. No caption that only repeats a visible title. The look is `starter/shared/product.css` – don't restyle per clip.
 - **Truth first.** Every caption is checked against the code (fact table with file:line). Nothing that does not exist
   is shown. App bugs found on the way are listed for the team, not worked around silently.
-- **Fictional data only.** Invented names, projects, issues; reuse the demo boards (`references/mcapps.md`). Never real
+- **Fictional data only.** Invented names, projects, issues; reuse the demo boards (`references/target-app.md`). Never real
   customers or colleagues without the user's explicit OK.
 - **Clean chrome.** Hide dev-only UI (dev banners/footers, «Patch OK» toasts) via `capture.css` / the capture script.
 - **Deterministic rendering.** Every frame is a pure function of `t` (`toolkit/README.md` › Deterministic rules).
@@ -154,7 +154,7 @@ createDemo({
 
 ## Reference files
 
-`references/mcapps.md` (MCApps capture facts and gotchas) · `references/storyboard-template.md` ·
+`references/target-app.md` (target-app capture facts and gotchas) · `references/storyboard-template.md` ·
 `references/lessons.md` (incl. client feedback) · `references/themes.md` · `references/ui-routes.md` (when the real
 app cannot be used) · `references/look-and-feel.md` · `references/clip-contract.md` · `toolkit/README.md` (layout,
 config, commands) · `toolkit/ENGINE-API.md` (every engine global) · `toolkit/TROUBLESHOOTING.md` ·

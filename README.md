@@ -1,6 +1,6 @@
 # feature-clip – Claude Code skill
 
-Silent, Norwegian feature-overview videos of MCApps (or another web app), made by Claude Code from the real UI:
+Silent, Norwegian feature-overview videos of a web app, made by Claude Code from the real UI:
 real screenshots, camera zoom, cursor, click ripples and highlights. Each clip is made in one variant – numbered
 step captions (default), or a persistent step checklist at the side for multi-section tutorials.
 
@@ -19,13 +19,13 @@ Restart Claude Code. Update later with `git pull` in the clone.
 
 ## Use
 
-Ask Claude Code e.g. «Lag et feature-klipp som viser hvordan man lagrer en tabellmal i MCApps, ca. 40 s»,
+Ask Claude Code e.g. «Lag et feature-klipp som viser hvordan man lagrer en tabellmal, ca. 40 s»,
 or run `/feature-clip`.
 
 Full user guide: [feature-clip/README.md](feature-clip/README.md).
 
-Your own demo project/board IDs go in `feature-clip/references/mcapps.local.md` (git-ignored); see
-[references/mcapps.md](feature-clip/references/mcapps.md).
+Your own demo project/board IDs go in `feature-clip/references/target-app.local.md` (git-ignored); see
+[references/target-app.md](feature-clip/references/target-app.md).
 
 ## Origin
 

@@ -1,4 +1,4 @@
-/* MCApps look for the overlays (feature-clip standard). App tokens: Inter, text rgb(48,56,65), primary #4782b8,
+/* Standard look for the overlays (feature-clip standard). App tokens: Inter, text rgb(48,56,65), primary #4782b8,
  * dark surfaces #1f2329-ish. Add clip-specific typing overlays at the bottom; keep the shared part unchanged so all
  * department clips look the same. */
 :root {

@@ -29,7 +29,7 @@ skill were removed, and their status notes were dropped from this file. Dated fa
   (`extras/variant.mjs`) generates `video.sjekkliste.json` for checklist clips (output `<name>.mp4`, no suffix);
   `pnpm final` (`extras/final.mjs`) renders and assembles the chosen variant; `pnpm review:sjekkliste` reviews it.
 - `pnpm review` (`toolkit/extras/review.mjs` + `review.html`): live review page with notes on frames.
-- `toolkit/starter/`: MCApps clip skeleton – config, standard `product.css`, capture script, scene with captions + checklist wrappers.
+- `toolkit/starter/`: clip skeleton – config, standard `product.css`, capture script, scene with captions + checklist wrappers.
 - `pnpm links` validates Markdown links, backtick file paths and `pnpm <script>` mentions; `pnpm test` runs `tools/*.test.mjs`.
 
 ## Gates (run before handing over a change to the skill)

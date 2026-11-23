@@ -1,6 +1,6 @@
 # Lessons from earlier productions
 
-## Silent MCApps clips (Nov 2026, six clips)
+## Silent feature clips (Nov 2026, six clips)
 
 Client feedback on the first round (2026-11-19), now built into the hard rules:
 - **"Gikk litt fort"** – too fast. Calm cursor (0.8–1.0 s), captions ≥ 3.5 s; `timeScale(1.25, …)` slows a finished scene.

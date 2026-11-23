@@ -1,10 +1,10 @@
 ---
-name: mcapps
-description: MCApps-specific facts for capturing feature clips – login, demo data, CSS to hide dev chrome, and UI gotchas found while making the first clips.
+name: target-app
+description: Target-app facts for capturing feature clips – login, demo data, CSS to hide dev chrome, and UI gotchas found while making the first clips.
 metadata:
-  tags: mcapps, capture, demo-data, gotchas
+  tags: target-app, capture, demo-data, gotchas
 ---
-# MCApps capture facts
+# Target app – capture facts
 
 Collected while making the first six clips (Nov 2026). Dates say when a fact was last seen – re-check before relying
 on IDs or bugs that may have been fixed since.
@@ -18,16 +18,16 @@ on IDs or bugs that may have been fixed since.
 
 ## Demo data
 
-Project and board IDs are not kept in this repo. If `references/mcapps.local.md` exists (git-ignored), read it for
+Project and board IDs are not kept in this repo. If `references/target-app.local.md` exists (git-ignored), read it for
 your demo project/board IDs and known problem issues. Otherwise ask the user for the project and a demo board, or
-create a demo board with fictional data, and note its IDs in the storyboard and in `mcapps.local.md`.
+create a demo board with fictional data, and note its IDs in the storyboard and in `target-app.local.md`.
 Real boards may be filmed **read-only** only with the user's explicit OK for internal use.
 
 - Custom attributes («Egne attributter») can't be deleted, only deactivated; their keys (A, B, …) are never reused.
   Capture retries leave inactive attributes behind – prefer clips that reuse existing attributes.
 - Restore demo data in the capture script's `finally` (unsubscribe, archive copies **and** their actions – archiving
   does not cascade, reset changed fields) so the next capture starts from the same state.
-- Batch edit: use a dropdown field (e.g. a revision «Status»), never a person or free-text field; MCApps has no
+- Batch edit: use a dropdown field (e.g. a revision «Status»), never a person or free-text field; the app has no
   batch-editable person fields.
 
 ## Hiding dev chrome

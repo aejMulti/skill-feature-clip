@@ -1,5 +1,5 @@
 {
-  "_doc": "MCApps feature clip – starter config (feature-clip skill). Paths are relative to this file. Keys starting with _ are ignored. Run pnpm voice-meta after every change.",
+  "_doc": "Feature clip – starter config (feature-clip skill). Paths are relative to this file. Keys starting with _ are ignored. Run pnpm voice-meta after every change.",
   "name": "SLUG",
   "output": "SLUG.mp4",
   "_maxSeconds": "60 by default. Raise only when the user asks for a longer clip – and keep it concise.",
@@ -12,7 +12,7 @@
   "page": { "w": 1670, "h": 940 },
   "camBase": { "s": 1.15, "cx": 835, "cy": 470 },
   "cursorRest": { "x": 1660, "y": 980 },
-  "_theme": "Choose per clip (references/themes.md) and say why here. spotlight suits MCApps' dense tables: one thing at a time, the rest dims.",
+  "_theme": "Choose per clip (references/themes.md) and say why here. spotlight suits dense tables: one thing at a time, the rest dims.",
   "theme": { "preset": "spotlight", "cursor": { "style": "arrow", "size": 28 } },
   "fonts": ["Inter"],
   "dirs": { "scenes": "scenes", "clips": "clips", "stills": "stills", "audio": "audio" },

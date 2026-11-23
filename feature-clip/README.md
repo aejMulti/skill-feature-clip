@@ -1,6 +1,6 @@
 # Feature clip – user guide
 
-Short, silent feature-overview videos (1920×1080 MP4, ~30–60 s) of MCApps or another web app: real screenshots,
+Short, silent feature-overview videos (1920×1080 MP4, ~30–60 s) of a web app: real screenshots,
 camera zoom, cursor, click ripples, highlights and Norwegian on-screen text. No voice, no audio.
 
 Each clip is made in **one** variant, chosen when you order it:
@@ -25,9 +25,9 @@ Requirements: Node 22+, pnpm, Edge or Chrome (Edge is default on Windows).
 
 ## Ordering a clip
 
-> Lag et feature-klipp som viser hvordan man lagrer en tabellmal i MCApps. Målgruppe: prosjektledere. Ca. 40 sekunder.
+> Lag et feature-klipp som viser hvordan man lagrer en tabellmal. Målgruppe: prosjektledere. Ca. 40 sekunder.
 
-Have MCApps running locally (`http://localhost:3000`) with demo data. What happens:
+Have the app running locally (`http://localhost:3000`) with demo data. What happens:
 
 1. **Storyboard** – the agent reads the code, checks every caption against it, and writes `storyboard.md`
    (steps, timing, caption per step, app bugs found). You approve it.
@@ -41,7 +41,7 @@ Clips live outside the product repo, e.g. `<workspace>/feature-videos/<slug>/vid
 
 ## Department defaults
 
-Norwegian bokmål · captions 48 px (wrap to two lines) · MCApps blue look (`toolkit/starter/shared/product.css`) ·
+Norwegian bokmål · captions 48 px (wrap to two lines) · standard look (`toolkit/starter/shared/product.css`) ·
 calm pace (every step shown, no side actions) · ≤ 60 s unless you ask for longer · fictional demo data only ·
 captions variant (checklist only for multi-section tutorials). Change a default for one clip by saying so when you order it; change it for everyone in this repo.
 
@@ -65,5 +65,5 @@ narrated product videos. Kept: the deterministic render engine, themes, render/a
 Removed: voice (Kokoro TTS, ElevenLabs, Whisper alignment), Remotion, Motion Canvas, Three.js guides.
 Added: `toolkit/extras/` – step captions, checklist and screenshot layers (`steps.js`), real-app capture
 (`capture.mjs`), length check (`budget.mjs`), live review page with notes (`review.mjs`), two-variant config and
-final render (`variant.mjs`, `final.mjs`); `toolkit/starter/` (MCApps clip skeleton). Fixed for Windows: LF line
+final render (`variant.mjs`, `final.mjs`); `toolkit/starter/` (clip skeleton). Fixed for Windows: LF line
 endings, `videoFrames` counts packets with `framecrc`. `@remotion/captions` replaced by a small inline SRT writer.

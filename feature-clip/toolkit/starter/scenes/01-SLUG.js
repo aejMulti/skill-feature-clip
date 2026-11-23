@@ -7,7 +7,7 @@ const SHOTS = ["a01-board", "a02-menu"];
 shotLayers(SHOTS.map((id) => ({ id, src: `../shots/${id}.png` })), RECTS);
 const H = hot;
 
-const title = mount(`<div class="stage-layer card"><div class="kicker">Register i MCApps</div>
+const title = mount(`<div class="stage-layer card"><div class="kicker">Register</div>
   <h1>TITTEL</h1><div class="bar"></div></div>`, "stage");
 const end = mount(`<div class="stage-layer card"><h1>Klar til bruk</h1><div class="bar"></div>
   <p>EN SETNING OM RESULTATET</p></div>`, "stage");

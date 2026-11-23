@@ -1,9 +1,9 @@
-// Capture script for «TITTEL» – MCApps local dev. Run pnpm capture --login once (log in with Entra in the window
+// Capture script for «TITTEL» – local dev. Run pnpm capture --login once (log in with Entra in the window
 // that opens), then pnpm capture. Writes shots/<id>.png and shared/rects.js (hotspot rects in page px).
 //
 // Rules: settled states only (no mid-animation shots); never click destructive actions the clip is not about;
 // restore demo data in `finally` (archive copies, reset fields) so the next run starts from the same state.
-const PROJECT = "PROJECT_ID";   // demo project – see references/mcapps.md (IDs in mcapps.local.md if present)
+const PROJECT = "PROJECT_ID";   // demo project – see references/target-app.md (IDs in target-app.local.md if present)
 const BOARD = "BOARD_ID";       // demo board with fictional data
 
 export default async ({ page, shot: rawShot, settle, baseUrl }) => {
